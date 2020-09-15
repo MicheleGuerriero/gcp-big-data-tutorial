@@ -1,0 +1,1 @@
+bq mk vf_polimi_demo_dataset

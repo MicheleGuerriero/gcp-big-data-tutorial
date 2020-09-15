@@ -1,0 +1,1 @@
+gcloud dataproc jobs kill vf-polimi-demo-job --region europe-west1

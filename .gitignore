@@ -1,0 +1,7 @@
+tweet-generator/venv/*
+.idea
+python/.ivy2
+python/.sbt
+python/.bash_history
+python/target/*
+python/dependency-reduced-pom.xml
