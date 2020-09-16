@@ -22,6 +22,7 @@ You can open the Cloud Shell by pressing the shell symbol on the top right part 
 Once you are logged in the Cloud Shell, the first thing to do is to clone the Github repository for this tutorial:
 
     git clone https://github.com/MicheleGuerriero/gcp-big-data-tutorial
+    
 
 ##### Setup the required topics and subscriptions for real time data processing. 
 There will be 3 topics:
@@ -36,31 +37,32 @@ and there will be 3 subscriptions:
 * dpi-kpi-subscription: used to consume directly from the web UI or from any other client the real time KPIs produced by the streaming application
 * late-dpi-subscription: used to consume from the web UI or any other client the dpi records that arrive too late
 
-You can configure topics and subscriptions by running the setup-pubsub.sh script from the cloud shell.
+You can configure topics and subscriptions by running the 01-setup-pubsub.sh script from the cloud shell.
 
 ##### Create bucket for storing historical data
 
 Historical data are stored in Google Cloud Storage in the form of csv files, partitioned by date of arrival.
-The only required setup is the creation of the necessary bucket, that can be achieved by running the create-gcs-bucket.sh script from the cloud shell.
+The only required setup is the creation of the necessary bucket, that can be achieved by running the 
+02-create-gcs-bucket.sh script from the cloud shell.
 
 ##### Create big query dataset for storing analytical outputs of batch processing
 
 The example Spark application will run periodically on the historical data to compute and update a relevant KPI.
 This KPI will be stored for further processing and analysis into Google BigQuery. To this aim, the only necessary setup is 
-the creation of a Big Query dataset, which can ne achieved by running the create-bq-dataset.sh script from the cloud shell.
+the creation of a Big Query dataset, which can ne achieved by running the 03-create-bq-dataset.sh script from the cloud shell.
 
 ##### Create a service account and gve the required permissions
 
 We now need to create a Google Service Account.
 This is effectively an account that we will use, in place of our own personal account,
 to provision resources and run applications on GCP. 
-In order to create the service account we can run the create-service-account.sh script,
+In order to create the service account we can run the 04-create-service-account.sh script,
 which will create a service account named dataproc-service-account.
 Then, it is necessary to grant this service account privileges in order
 to operate with GCP resources. In particular, we need the service account
 to be able to work with Dataproc, BigQuery and PubSub, specifically with the 
 resources we have just created. In order to achieve this, we can run the
-add-dataproc-worker-role-to-sa.sh and the add-pubsub-role-to-sa.sh scripts,
+05-add-dataproc-worker-role-to-sa.sh and the 06-add-pubsub-role-to-sa.sh scripts,
 which contain the gcloud commands that are necessary to configure all the 
 required roles and permissions.
 
@@ -72,7 +74,7 @@ To reproduce this scenario in our example, the DPIs processed by the streaming a
 We simulate a one-shot uploading of raw data about customers consent; this data will be then used by the streaming application.
 The provided file consents.csv contains the information about the consent given by each customer (for the example customers of our example).
 The only necessary setup is the upload of the consents.csv file into an appropriate folder under the GCS bucket.
-This can be achieved by running the ingest_consents.sh script from the cloud shell.
+This can be achieved by running the 07-ingest_consents.sh script from the cloud shell.
 
 ##### Create VM for running dpi generator and ingestion process of historical data
 
@@ -84,13 +86,13 @@ arrive in the first place. But PubSub is not meant for long term data storage, w
 we will need to run the above process, which is enacted by the batch-ingestion.py application. 
 These two applications will need to run on an appropriate infrastructure. In this case, a simple virtual machine 
 is enough. In order to create the required virtual machine on Google Compute Engine, first execute
-the create-ingestion-vm.sh script; once the VM is created, you can go to the Compute Engine tab and visualize
+the 08-create-ingestion-vm.sh script; once the VM is created, you can go to the Compute Engine tab and visualize
 the VM instance; then you can look for the created VM and click on the SSH button, which will open an ssh session 
 to the VM. Once you are logged in, you can finalize the VM configuration by executing the following commands:
 
     sudo apt-get update
-    sudo apt-get install -y python3-pip
-    pip3 install pytz google-cloud-storage google-cloud-pubsub ratelimit
+    sudo apt-get install -y python3-pip git
+    pip3 install pytz google-cloud-storage google-cloud-pubsub 
 
 ##### From the VM ssh session, start in background ingestion process of historical data
 
@@ -118,7 +120,7 @@ In this way the application will produce 100 records per minute, for 30 minutes.
 Now that the ingestion process is up and running, we can go ahead and process our data. In order to cope with the high volume 
 of DPIs, we need a distributed data processing platform, that's why we are going to use Spark and, more specifically, Dataproc,
 which is the solution provided by Google managing Spark cluster on GCP. 
-We can setup a suitable Spark cluster by running the create-dp-cluster.sh script from the cloud shell.
+We can setup a suitable Spark cluster by running the 09-create-dp-cluster.sh script from the cloud shell.
 
 ##### Submit to the data proc cluster the streaming application
 
@@ -135,7 +137,7 @@ timestamp they carry is way too older, according to a user-defined threshold, th
 Late records are not considered in the computation of data consumption, but are retained and published
 into a second output topic, namely late-dpi-topic, for monitoring and analytics purposes.
 
-In order to submit the streaming application using spark, we can run the submit-streaming-job.sh script from the cloud shell.
+In order to submit the streaming application using spark, we can run the 10-submit-streaming-job.sh script from the cloud shell.
 
 ##### Look at the various outputs of the streaming application from the pubsub topics web UI
 
@@ -151,7 +153,7 @@ This can be done by executing the compute-kpi-batch.py application. This will co
 the amount of data allowance that customer consumes, averaged across all the days of the month. This KPI can be useful for example 
 to detect when a customer deviates too much from her usual data usage pattern and to react accordingly. 
 The application writes the output KPI into a Big Query table in the dataset created before.
-In order to execute the batch application using spark, we can run the submit-job.sh script from the cloud shell.
+In order to execute the batch application using spark, we can run the 11-submit-batch-job.sh script from the cloud shell.
 
 ##### Look at the output of the batch application from big query web UI and perform some queries
 
