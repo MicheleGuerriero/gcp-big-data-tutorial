@@ -1,4 +1,27 @@
+The only pre-requirement for this GCP tutorial is to have a Google account. Google accounts come
+with 300$ of free trial for GCP services, so this credit can be used (just a small fraction should be required)
+to replicate this tutorial. 
+Of course you'll need a browser (Chrome is recommended).
+
 ##### Project creation and the Google Cloud shell
+
+Once you are logged with your Google account, you can reach the GCP console by pressing the "Console"
+button on the top right part of the following web page:
+    
+    https://cloud.google.com/
+    
+Once you are at the GCP console, the first thing to do is to create a new project, by pressing "Select a project"
+on the top left of the page. From there, press "New project", type a project name (for instance, "big-data-env"),
+then press "Create".
+
+At this point, another important element of this tutorial and of GCP in general, is the Cloud Shell.
+The Cloud Shell is a fully-configured shell  (available tools are git, maven, various python module and more)
+that can be used to work with GCP services directly from a web browser.
+You can open the Cloud Shell by pressing the shell symbol on the top right part of the GCP console.
+
+Once you are logged in the Cloud Shell, the first thing to do is to clone the Github repository for this tutorial:
+
+    git clone https://github.com/MicheleGuerriero/gcp-big-data-tutorial
 
 ##### Setup the required topics and subscriptions for real time data processing. 
 There will be 3 topics:
