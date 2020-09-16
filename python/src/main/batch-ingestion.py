@@ -7,8 +7,9 @@ from datetime import timedelta
 import os
 from google.cloud import pubsub
 import hashlib
+import sys
 
-PROJECT = 'big-data-env'
+PROJECT = sys.argv[1]
 BUCKET = 'vf-polimi-batch-data'
 DPI_TOPIC_SUBSCRIPTION = 'dpi-subscription'
 client=storage.Client()
@@ -36,7 +37,7 @@ def callback(message):
         file.write(new_message + '\n')
     now_dt = utc_to_local(datetime.now())
     global start_int
-    if(now_dt > start_int + timedelta(seconds = 30)):
+    if(now_dt > start_int + timedelta(seconds = 120)):
         # upload the file content into gcs in the right partition
         blob=bucket.blob('dpi/' + start_int.strftime("year=%Y/month=%-m/day=%-d/%H-%M-%S") + '.csv')
         blob.upload_from_filename('staging.csv')

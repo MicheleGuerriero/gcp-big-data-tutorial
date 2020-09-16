@@ -6,6 +6,8 @@ from airflow.operators import dummy_operator
 import datetime
 from airflow.contrib.operators.dataproc_operator import DataprocClusterCreateOperator
 
+PROJECT='big-data-environment'
+
 default_dag_args = {
     'start_date': datetime.datetime(2020, 9, 15),
     'provide_context': True
@@ -19,9 +21,9 @@ with models.DAG(
     create_dataproc_cluster = DataprocClusterCreateOperator(
         task_id='create_dataproc_cluster',
         cluster_name="vf-polimi-demo",
-        project_id="big-data-env",
+        project_id=PROJECT,
         num_workers=2,
-        service_account="dataproc-service-account@big-data-env.iam.gserviceaccount.com",
+        service_account="dataproc-service-account@" + PROJECT + ".iam.gserviceaccount.com",
         master_machine_type="n1-highmem-4",
         worker_machine_type="n1-highmem-4",
         worker_disk_size=50,
@@ -29,7 +31,7 @@ with models.DAG(
         image_version="1.4-debian9",
         tags=['default-allow-internal', 'default-allow-ssh'],
         region="europe-west1",
-        subnetwork_uri="projects/big-data-env/regions/europe-west1/subnetworks/default",
+        subnetwork_uri="projects/" + PROJECT + "/regions/europe-west1/subnetworks/default",
         properties={'core:fs.gs.implicit.dir.repair.enable': 'false', 'core:fs.gs.status.parallel.enable' : 'true', 'core:mapreduce.fileoutputcommitter.marksuccessfuljobs' : 'false', 'core:spark.pyspark.python' : 'python3', 'core:spark.pyspark.driver.python' : 'python3'},
         metadata = {'enable-oslogin' : 'true', 'PIP_PACKAGES' : 'google-cloud-pubsub'},
         optional_components=['ANACONDA','JUPYTER','ZEPPELIN'],
@@ -52,7 +54,7 @@ with models.DAG(
     )
 
     remove_cluster = dataproc_operator.DataprocClusterDeleteOperator(
-        project_id='big-data-env',
+        project_id=PROJECT,
         task_id="delete_cluster",
         cluster_name='vf-polimi-demo',
         region='europe-west1'

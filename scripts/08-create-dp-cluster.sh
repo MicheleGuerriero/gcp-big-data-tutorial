@@ -6,13 +6,13 @@ gcloud beta dataproc clusters create vf-polimi-demo \
 --region europe-west1 \
 --zone europe-west1-b \
 --service-account="$SERVICE_ACCOUNT_NAME@$PROJECT.iam.gserviceaccount.com" \
---subnet projects/big-data-env/regions/europe-west1/subnetworks/default \
+--subnet projects/$PROJECT/regions/europe-west1/subnetworks/default \
 --tags default-allow-internal,default-allow-ssh \
---project big-data-env \
+--project $PROJECT \
 --master-machine-type n1-standard-2 \
 --master-boot-disk-size 60 \
 --worker-boot-disk-size 60 \
---num-workers 4 \
+--num-workers 2 \
 --worker-machine-type n1-standard-2 \
 --image-version 1.4-debian9 \
 --metadata enable-oslogin=true \

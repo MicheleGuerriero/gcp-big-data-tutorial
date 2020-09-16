@@ -12,7 +12,7 @@ def utc_to_local(utc_dt):
     local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
     return local_tz.normalize(local_dt)
 
-PROJECT = 'big-data-env'#sys.argv[1]
+PROJECT = sys.argv[1]
 TOTAL_TIME = int(sys.argv[2])  # in minutes
 RATE = int(sys.argv[3])  # in dpis per minute
 

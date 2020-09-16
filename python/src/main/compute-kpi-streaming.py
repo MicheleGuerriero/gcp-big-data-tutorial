@@ -8,8 +8,9 @@ from pyspark.sql.types import *
 from google.cloud import storage
 from pyspark.sql.functions import udf
 import hashlib
+import sys
 
-PROJECT = 'big-data-env'
+PROJECT = sys.argv[1]
 TOPIC_NAME = 'dpi-kpi-topic'
 TOPIC_NAME_LATE_DPI = 'late-dpi-topic'
 
@@ -43,14 +44,17 @@ dpiSchema = StructType([ \
     StructField("number", StringType(), True), \
     StructField("signature", StringType(), True), \
     StructField("usage", DoubleType(), True), \
-    StructField("timestamp", TimestampType(), True) \
+    StructField("timestamp", TimestampType(), True), \
+    StructField("year", IntegerType(), True), \
+    StructField("month", IntegerType(), True), \
+    StructField("day", IntegerType(), True)
 ])
 
 dpis = spark \
     .readStream \
     .schema(dpiSchema) \
     .option("timestampFormat","dd/MM/yyyy-HH:mm:ss") \
-    .option("maxFilesPerTrigger", 1) \
+    .option("maxFilesPerTrigger", 2) \
     .csv("gs://vf-polimi-batch-data/dpi")
 
 def map_consent(mapping):
@@ -88,9 +92,8 @@ kpis = dpis.withWatermark("timestamp", str(late_dpi_threshold) + " seconds") \
     'timestamp'
 ).sum('usage')
 
-# add triggering logic: if higher than threshold trigger a campaign writing a row on bigquery
-threshold = 10000
 
+# function to write output triggers to PubSub topic
 def kpi_to_topic(row):
     # Write row to pubsub output topic
     publisher = pubsub.PublisherClient()
@@ -100,7 +103,9 @@ def kpi_to_topic(row):
     )
     publisher.publish(topic_url, ','.join([str(row.window), row.number, row.signature, str(row['sum(usage)'])]).encode('utf-8'))
 
-kpis.writeStream.foreach(kpi_to_topic).start().awaitTermination()
+# add triggering logic: if higher than threshold trigger a campaign writing a row on bigquery
+threshold = 10000
+kpis.filter(f.col("sum(usage)") > 10000).writeStream.foreach(kpi_to_topic).start().awaitTermination()
 
 # Alternative solution in which data is read directly from PubSub (instead of GCS) and is then uploaded to HDFS in chunks
 
@@ -124,7 +129,7 @@ kpis.writeStream.foreach(kpi_to_topic).start().awaitTermination()
 #         os.remove('staging.csv')
 #
 # subscriber = pubsub.SubscriberClient()
-# subscription_path = subscriber.subscription_path('big-data-env', 'dpi-subscription')
+# subscription_path = subscriber.subscription_path(PROJECT, 'dpi-subscription')
 # streaming_pull_future = subscriber.subscribe(subscription_path, callback=callback)
 # print("Listening for messages on {}..\n".format(subscription_path))
 

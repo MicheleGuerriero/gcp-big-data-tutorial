@@ -10,6 +10,7 @@ def utc_to_local(utc_dt):
     local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
     return local_tz.normalize(local_dt)
 
+print('Starting spark session...')
 spark = SparkSession \
           .builder \
           .appName('compute-kpi-batch') \
@@ -37,11 +38,14 @@ df = df\
     .withColumnRenamed('avg(sum(usage))','average_usage')
 
 # need to create a dataset first "bq mk vf_polimi_demo_dataset"
+print('Computing kpis and writing output to BigQuery')
 df.write.format('bigquery') \
     .option('table', 'vf_polimi_demo_dataset.batch_kpi%d%d' % (now.year, now.month)) \
     .option("temporaryGcsBucket","vf-polimi-batch-data") \
     .mode('overwrite') \
     .save()
+
+print('Finished')
 
 # alternative solution to write output on GCS partitioned by date
 #df.write.partitionBy('hour').option('header', 'true').mode('overwrite').csv('gs://vf-polimi-batch-data/dpi-kpi/year=%d/month=%d' % (now.year, now.month))

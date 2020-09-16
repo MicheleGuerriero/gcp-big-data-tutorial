@@ -11,7 +11,7 @@ button on the top right part of the following web page:
     https://cloud.google.com/
     
 Once you are at the GCP console, the first thing to do is to create a new project, by pressing "Select a project"
-on the top left of the page. From there, press "New project", type a project name (for instance, "big-data-env"),
+on the top left of the page. From there, press "New project", type a project name (for instance, "big-data-environment"),
 then press "Create".
 
 At this point, another important element of this tutorial and of GCP in general, is the Cloud Shell.
@@ -98,7 +98,7 @@ to the VM. Once you are logged in, you can finalize the VM configuration by exec
 
 Once the VM is configured, we can start in the background the ingestion process of historical data by running the batch-ingestion-py application:
 
-    nohup python3 batch-ingestion.py > batch-ingestion.log 2>&1 &
+    nohup python3 batch-ingestion.py big-data-environment > batch-ingestion.log 2>&1 &
     
 The application will start in the background and will periodically pull new record from the dpi-topic PubSub topic.
 The application appends the records into a temporaty file named staging.csv. Once the minimum number of records is reached,
@@ -110,7 +110,7 @@ We can now start generating DPI records by running the dpi-generator.py applicat
 for how long it must run (in minutes) and how many records per minute it has to generate and send. We can start the application in the background for 
 a sufficient amount of time by running the following command:
 
-    nohup python3 dpi-generator.py big-data-env 60 30 > dpi-generator.log 2>&1 &
+    nohup python3 dpi-generator.py big-data-environment 60 30 > dpi-generator.log 2>&1 &
     
 In this way the application will produce 100 records per minute, for 30 minutes. Once the application finishes,
  we can restart it with the same command if needed.
@@ -187,3 +187,6 @@ by clicking on the "Airflow" button, the Aiflow web UI shows up, from which it i
 DAGs execution. The DAG for scheduling out batch application is configured to run every 10 minutes.
 The various execution can be directly monitored from the Airflow UI, while from Big Query it is possible
 to monitor the results that get updated every 10 minutes.
+
+
+
