@@ -84,6 +84,7 @@ def late_dpi_to_topic(row):
     publisher.publish(topic_url, ','.join([row.number, row.signature, str(row.usage), str(row.timestamp), str(row.delay)]).encode('utf-8'))
 
 late_dpis.writeStream.foreach(late_dpi_to_topic).start().awaitTermination()
+#late_dpis.writeStream.format('console').option('truncate','false').start()
 
 kpis = dpis.withWatermark("timestamp", str(late_dpi_threshold) + " seconds") \
     .groupBy(f.window(dpis.timestamp, str(window_length) + " seconds", str(slide_length) + " seconds"),
@@ -104,7 +105,8 @@ def kpi_to_topic(row):
     publisher.publish(topic_url, ','.join([str(row.window), row.number, row.signature, str(row['sum(usage)'])]).encode('utf-8'))
 
 # add triggering logic: if higher than threshold trigger a campaign writing a row on bigquery
-threshold = 10000
+threshold = 200
+#kpis.writeStream.format('console').option('truncate','false').start()
 kpis.filter(f.col("sum(usage)") > 10000).writeStream.foreach(kpi_to_topic).start().awaitTermination()
 
 # Alternative solution in which data is read directly from PubSub (instead of GCS) and is then uploaded to HDFS in chunks

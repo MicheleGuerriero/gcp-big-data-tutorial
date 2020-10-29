@@ -98,7 +98,7 @@ to the VM. Once you are logged in, you can finalize the VM configuration by exec
 
 Once the VM is configured, we can start in the background the ingestion process of historical data by running the batch-ingestion-py application:
 
-    nohup python3 batch-ingestion.py big-data-environment > batch-ingestion.log 2>&1 &
+    nohup python3 batch-ingestion.py big-data-env > batch-ingestion.log 2>&1 &
     
 The application will start in the background and will periodically pull new record from the dpi-topic PubSub topic.
 The application appends the records into a temporaty file named staging.csv. Once the minimum number of records is reached,
@@ -110,7 +110,7 @@ We can now start generating DPI records by running the dpi-generator.py applicat
 for how long it must run (in minutes) and how many records per minute it has to generate and send. We can start the application in the background for 
 a sufficient amount of time by running the following command:
 
-    nohup python3 dpi-generator.py big-data-environment 60 30 > dpi-generator.log 2>&1 &
+    nohup python3 dpi-generator.py big-data-env 60 30 > dpi-generator.log 2>&1 &
     
 In this way the application will produce 100 records per minute, for 30 minutes. Once the application finishes,
  we can restart it with the same command if needed.
