@@ -10,10 +10,10 @@ gcloud beta dataproc clusters create vf-polimi-demo \
 --tags default-allow-internal,default-allow-ssh \
 --project $PROJECT \
 --master-machine-type n1-standard-2 \
---master-boot-disk-size 60 \
---worker-boot-disk-size 60 \
---num-workers 2 \
---worker-machine-type n1-standard-2 \
+--master-boot-disk-size 500 \
+--worker-boot-disk-size 5000 \
+--num-workers 4 \
+--worker-machine-type n1-standard-4 \
 --image-version 1.4-debian9 \
 --metadata enable-oslogin=true \
 --metadata PIP_PACKAGES=google-cloud-pubsub \
