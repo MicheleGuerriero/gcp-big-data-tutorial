@@ -11,7 +11,7 @@ gcloud beta dataproc clusters create vf-polimi-demo \
 --project $PROJECT \
 --master-machine-type n1-standard-2 \
 --master-boot-disk-size 500 \
---worker-boot-disk-size 5000 \
+--worker-boot-disk-size 500 \
 --num-workers 4 \
 --worker-machine-type n1-standard-4 \
 --image-version 1.4-debian9 \
