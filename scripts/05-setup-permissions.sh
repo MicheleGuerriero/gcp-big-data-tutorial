@@ -22,3 +22,13 @@ gcloud beta pubsub topics add-iam-policy-binding \
     dpi-topic \
     --role roles/pubsub.publisher \
     --member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT.iam.gserviceaccount.com"
+
+gcloud beta pubsub topics add-iam-policy-binding \
+    late-dpi-topic \
+    --role roles/pubsub.publisher \
+    --member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT.iam.gserviceaccount.com"
+
+gcloud beta pubsub topics add-iam-policy-binding \
+    dpi-kpi-topic \
+    --role roles/pubsub.publisher \
+    --member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT.iam.gserviceaccount.com"
