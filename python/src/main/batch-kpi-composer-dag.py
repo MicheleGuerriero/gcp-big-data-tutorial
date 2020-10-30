@@ -6,7 +6,7 @@ from airflow.operators import dummy_operator
 import datetime
 from airflow.contrib.operators.dataproc_operator import DataprocClusterCreateOperator
 
-PROJECT='big-data-environment'
+PROJECT='big-data-env'
 
 default_dag_args = {
     'start_date': datetime.datetime(2020, 9, 15),
