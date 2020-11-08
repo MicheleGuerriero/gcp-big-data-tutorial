@@ -1,0 +1,1 @@
+SELECT signature, hour, SUM(average_usage) FROM vf_polimi_demo_dataset.batch_kpi202011 GROUP BY signature, hour
